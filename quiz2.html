@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz 2</title>
+    <style>
+
+        h1 {
+            text-align: center;
+            color: rgb(15, 15, 15);
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            
+        }
+
+
+        body {
+            background-color: #878383; /* Light Blue */
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif, ;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        nav ul {
+            list-style-type: none;
+            text-align: center;
+            padding: 0;
+            margin: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin-right: 20px;
+        }
+
+        .quiz-container {
+            background-color: #7f7f7f;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 8px rgba(232, 229, 229, 0.1);
+            width: 80%;
+            max-width: 700px;
+        }
+
+        .question {
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #000000;
+            border-radius: 4px;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .question:hover {
+            background-color: #999393;
+            cursor: pointer;
+        }
+
+        .options {
+            list-style: none;
+            padding: 0;
+            margin-top: 10px;
+            text-align: left;
+        }
+
+        .options li {
+            margin-bottom: 8px;
+        }
+
+        input[type="radio"],
+        input[type="checkbox"] {
+            margin-right: 5px;
+        }
+
+        button {
+            display: block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #e2e6ea;
+            color: rgb(189, 185, 247);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #585858;
+        }
+
+        #results-container {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    
+    <div class="quiz-container">
+        <h1>The potty trained quiz</h1>
+        <img src="logo.jpg" width="400" height="125">
+
+            <nav>
+                <ul>
+                    <a href="contact-us.html">
+                    <li>Contact</li></a>
+                    <a href="about-us.html">
+                    <li>About</li></a>
+                    <a href="login.html">
+                    <li>Login</li></a>
+                    <a href="homepage.html">
+                    <li>homepage</li></a>
+                    <a href="quiz2.html">
+                    <li>Retry</li></a>
+                </ul>
+            </nav>
+        <form id="quiz-form">
+            <button type="submit">Submit Quiz</button>
+        </form>
+        <div id="results-container" style="display: none;">
+            <h2>Quiz Results</h2>
+            <p id="score"></p>
+            <p id="feedback"></p>
+        </div>
+        <audio id="cheerSound" src="cheer.mp3"></audio>
+        <audio id="mehSound" src="meh.mp3"></audio>
+        <audio id="fartSound" src="fart.mp3"></audio>
+        <audio id="damnSound" src="damn.mp3"></audio>
+        <audio id="vacaSound" src="vaca-dreamer.mp3"></audio>
+        <audio id="boredSound" src="bored.mp3"></audio>
+    </div>
+
+    <script>
+        const quizContainer = document.getElementById('quiz-form');
+        const resultsContainer = document.getElementById('results-container');
+        const scoreDisplay = document.getElementById('score');
+        const feedbackDisplay = document.getElementById('feedback');
+        const cheerSound = document.getElementById('cheerSound');
+
+        const questions = [
+            {
+                question: "What is 7 + 8?",
+                options: ["15", "37", "69", "96"],
+                correctAnswer: "15",
+                type: "radio",
+                points: 10
+            },
+            {
+                question: "When I farted, where did the gasses go?",
+                options: ["Jupiter", "The Moon", "My Pants", "My Esophagus"],
+                correctAnswer: "My Esophagus",
+                type: "radio",
+                points: 10
+            },
+            {
+                question: "When my mom walked in, I was rehearsing for what?",
+                options: ["Duck Dynasty", "The prohibition", "Circle K", "Ruby Tuesday's"],
+                correctAnswer: "The prohibition",
+                type: "radio",
+                points: 10
+            },
+            {
+                question: "Who founded the 'FUNsite'?",
+                options: ["Big Toe Larry", "Ronald McDonald", "The Big Cheese", "Wolf Silvey"],
+                correctAnswer: ["Big Toe Larry", "Wolf Silvey"],
+                type: "checkbox",
+                points: 10
+            },
+            {
+                question: "What is the speed of my cumshot?",
+                options: ["250,000 m/s", "Feel good to the power of 100", "The speed of earths gravity", "Aaron Rodgers"],
+                correctAnswer: "Feel good to the power of 100",
+                type: "radio",
+                points: 10
+            },
+            {
+                question: "Why did uncle sam trade freedom for money?",
+                options: ["He needed milk", "To abolish brokery", "To save America", "To break the people"],
+                correctAnswer: "To abolish brokery",
+                type: "radio",
+                points: 10
+            },
+            {
+                question: "To be or not to be. Why is this question blank?",
+                options: [".", "._", ".^", "^="],
+                correctAnswer: ".",
+                type: "radio",
+                points: 10
+            },
+            {
+                question: "When pixie dust blew out my crack, What sound did it make?",
+                options: ["Hemispheric whistles", "Problematic Testosterone", "Void", "Null"],
+                correctAnswer: "Hemispheric whistles",
+                type: "radio",
+                points: 10
+            },
+            {
+                question: "As the earth rotates, who stands still?",
+                options: ["Everyone", "My Grandmother, because shes dead", "My nosering", "Grumpy cat"],
+                correctAnswer: "Everyone",
+                type: "radio",
+                points: 10
+            },
+            {
+                question: "At the end of this quiz, what did you do?",
+                options: ["Scratch your arm", "Scratch your throat", "Scratch your eye", "Scratch the chlomedia off your nutsack"],
+                correctAnswer: "Scratch your arm",
+                type: "radio",
+                points: 10
+            },
+
+            ];
+
+            questions.sort(() => Math.random() - 0.5);
+
+            
+        function displayQuestions() {
+            questions.forEach((questionData, index) => {
+                const questionDiv = document.createElement('div');
+                questionDiv.classList.add('question');
+                questionDiv.innerHTML = `<p>${index + 1}. ${questionData.question}</p>`;
+
+                const optionsList = document.createElement('ul');
+                optionsList.classList.add('options');
+
+                questionData.options.forEach(option => {
+                    const listItem = document.createElement('li');
+                    const input = document.createElement('input');
+                    input.type = questionData.type;
+                    input.name = `question-${index}`;
+                    input.value = option;
+                    input.id = `q${index}-${option.replace(/ /g, '_')}`; // Unique ID for label association
+
+                    const label = document.createElement('label');
+                    label.textContent = option;
+                    label.setAttribute('for', `q${index}-${option.replace(/ /g, '_')}`);
+
+                    listItem.appendChild(input);
+                    listItem.appendChild(label);
+                    optionsList.appendChild(listItem);
+                });
+
+                questionDiv.appendChild(optionsList);
+                quizContainer.insertBefore(questionDiv, document.querySelector('button[type="submit"]'));
+            });
+        }
+
+        function calculateScore() {
+            let score = 0;
+            questions.forEach((questionData, index) => {
+                const selectedOptions = Array.from(quizContainer.querySelectorAll(`input[name="question-${index}"]:checked`)).map(input => input.value);
+
+                if (questionData.type === 'radio') {
+                    if (selectedOptions[0] === questionData.correctAnswer) {
+                        score += questionData.points;
+                    }
+                } else if (questionData.type === 'checkbox') {
+                    const isCorrect = questionData.correctAnswer.length === selectedOptions.length && questionData.correctAnswer.every(item => selectedOptions.includes(item));
+                    if (isCorrect) {
+                        score += questionData.points;
+                    }
+                }
+            });
+            return score;
+        }
+
+        quizContainer.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const finalScore = calculateScore();
+            scoreDisplay.textContent = `Your Score: ${finalScore} / 100`; 
+            let feedbackText = "";
+
+        if (finalScore >= 80) {
+                feedbackText = "So, you wanna be smarter than a 5th grader. Congratulations.";
+                cheerSound.play();
+            } else if (finalScore >= 60) {
+                feedbackText = "It's a bird, it's a plane, no it's you! You are a Superhero!";
+                avgSound.play();
+            } else if (finalScore >= 40) {
+                feedbackText = "What about a beer. Seems like youve had a few too many by now";
+                mehSound.play();
+            } else if (finalScore >= 20) {
+                feedbackText = "Daaaamn, like its Friday. You had a blast like it's sonic. You wine and dine like a baby. I'm stacking similes like Lil' Wayne. You are a Treehouse Rat Tattooer.";
+                damnSound.play();
+            } else if (finalScore <= 10) {
+                feedbackText = "Wow! You just made a 10 or less. You lick donkey teeth.";
+                fartSound.play();
+            }
+            feedbackDisplay.textContent = feedbackText;
+
+            quizContainer.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            });
+
+        displayQuestions();
+
+    </script>
+</body>
+</html>

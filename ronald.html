@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Puzzle 4</title>
+    <h1>Ronald Reagan</h1>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        h1 {
+            text-align: center;
+            color: #000000;
+        }
+        body {
+            /*----For background images----*/
+            background-image: url("flag.jpg");
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center;
+            background-size: 800px 770px;
+            /*-----------------------------*/
+            font-family: Times, sans-serif;
+            display:flex ;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            border-color: #ff0000 #ffffff #003cff #003cff;
+            border-style: solid;
+            border-width: 6px;
+            background-color: #c61818;
+            margin: 0;
+        }
+
+        #game-container {
+            background-color: #828282;
+            box-shadow: 0 200px 400px rgba(132, 199, 243, 0.2);
+            border-radius: 20px 20px; 
+            padding: 10px;
+            width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #puzzle-area {
+            height:60px;
+            width:60px;
+            box-sizing:block;
+            display: grid;
+            grid-template-columns: repeat(4, 80px);
+            grid-template-rows: repeat(4, 80px);
+            width: 320px;
+            height: 325px;
+            background-color: #bd4747;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+
+        #pieces-container {
+            color: #393838;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 420px;
+            margin-bottom: 20px;
+        }
+
+        .puzzle-piece {
+            width: 60px;
+            height: 60px;
+            border: 2px solid #003cff;
+            box-sizing: border-box;
+            cursor: grab;
+            background-repeat: no-repeat;
+            background-size: 320px 320px;
+            margin: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.8em;
+            color: #000000;
+        }
+
+        .puzzle-slot {
+            /* border: 1px solid #fee; */ /* Optional: for visual guidance */
+            width: 80px;
+            height: 80px;
+            color:#636363;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .placed {
+            border: none;
+        }
+
+    #animation-container {
+        border-color:#00ffc3 #d400ff #000000 #ffffff;
+        border-style: fixed;
+        position: fixed;
+        top: 65%;
+        left: -300px; /* Start off-screen */
+        transform: translateY(-80%);
+        width: auto;
+        height: auto;
+        z-index: 1000;
+        opacity: 0; /* Initially hidden */
+    }
+
+    #celebration-gif {
+        width: 100%;
+        height: auto;
+        display: ruby-base;
+        max-width: 200px;
+        height: auto;
+    }
+
+/* Animation definition */
+@keyframes slideAcross {
+    2% {
+    left: -80px; /* Start position */
+    opacity: 1.8;
+    }
+    100% {
+    left: 150%;    /* End position */
+    opacity: 2;
+    transform: translate(-50%, -50px); /* Adjust for clean exit */
+    opacity: 1;
+    }
+}
+/* Class to trigger the animation */
+.animate {
+  animation: slideAcross 5s ease-in-out forwards; /* Apply the animation */
+}
+
+        #message-container {
+            margin-top: 20px;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        #timer {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            color:#ffffff;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Image Puzzle 4</h1>
+
+    <div id="timer">Time Left: 5:00</div>
+
+    <div id="game-container">
+        <div id="pieces-container"></div>
+        <div id="puzzle-area"></div>
+    </div>
+
+    <div id="message-container">Less time</div>
+    <audio id="cheerSound" src="cheer.mp3"></audio>
+
+    <div id="animation-container">
+    <img id="celebration-gif" src="fatman.gif" alt="Celebration Animation">
+    </div>
+
+    <script>
+        const piecesContainer = document.getElementById('pieces-container');
+        const puzzleArea = document.getElementById('puzzle-area');
+        const messageContainer = document.getElementById('message-container');
+        const timerDisplay = document.getElementById('timer');
+        const imageSrc = 'ronald.jpg'; // Ensure this matches your image name
+        const gridSize = 4;
+        const totalPieces = gridSize * gridSize;
+        let pieces = [];
+        let slots = [];
+        let startTime;
+        let timerInterval;
+        const timeLimitSeconds = 300; // 5 minutes
+
+        function createPuzzle() {
+            for (let i = 0; i < totalPieces; i++) {
+                const piece = document.createElement('div');
+                piece.classList.add('puzzle-piece');
+                const row = Math.floor(i / gridSize);
+                const col = i % gridSize;
+                piece.style.backgroundImage = `url('${imageSrc}')`;
+                piece.style.backgroundPosition = `-${col * 80}px -${row * 80}px`;
+                piece.dataset.index = i;
+                piece.draggable = true;
+                pieces.push(piece);
+
+                const slot = document.createElement('div');
+                slot.classList.add('puzzle-slot');
+                slot.dataset.slotIndex = i;
+                slots.push(slot);
+            }
+        }
+
+        function shufflePieces() {
+            pieces.sort(() => Math.random() - 0.5);
+            pieces.forEach(piece => {
+                piecesContainer.appendChild(piece);
+            });
+            slots.forEach(slot => {
+                puzzleArea.appendChild(slot);
+            });
+        }
+
+        function startTimer() {
+            startTime = new Date().getTime();
+            timerInterval = setInterval(() => {
+                const currentTime = new Date().getTime();
+                const elapsedTime = Math.floor((currentTime - startTime) / 500);
+                const timeLeft = timeLimitSeconds - elapsedTime;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    messageContainer.textContent = "Time's up! You didn't solve the puzzle.";
+                    disableDragging();
+                    timerDisplay.textContent = "Time Left: 0:00";
+                    return;
+                }
+
+                const minutes = Math.floor(timeLeft / 60).toString().padStart(1, '0');
+                const seconds = (timeLeft % 60).toString().padStart(2, '0');
+                timerDisplay.textContent = `Time Left: ${minutes}:${seconds}`;
+            }, 1000);
+        }
+
+        function isSolved() {
+            const placedPieces = puzzleArea.querySelectorAll('.puzzle-piece');
+            if (placedPieces.length !== totalPieces) {
+                return false; // Not solved if not all pieces are in the puzzle area
+            }
+            for (let i = 0; i < placedPieces.length; i++) {
+                const piece = placedPieces[i];
+                if (!piece.dataset.originalIndex || parseInt(piece.dataset.originalIndex) !== i) {
+                    return false; // Not solved if any piece is in the wrong slot
+                }
+            }
+            return true; // All pieces are in the correct slots
+        }
+
+        function handleDragStart(event) {
+            event.dataTransfer.setData('text/plain', event.target.dataset.index);
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault();
+        }
+
+        function handleDrop(event) {
+            event.preventDefault();
+            const draggedIndex = event.dataTransfer.getData('text/plain');
+            const draggedPiece = pieces.find(p => p.dataset.index === draggedIndex);
+            const targetSlot = event.target.closest('.puzzle-slot');
+
+            if (targetSlot && targetSlot.children.length === 0 && draggedPiece) {
+                draggedPiece.dataset.originalIndex = targetSlot.dataset.slotIndex;
+                targetSlot.appendChild(draggedPiece);
+                draggedPiece.classList.add('placed');
+                draggedPiece.style.width = '80px';
+                draggedPiece.style.height = '80px';
+                draggedPiece.style.margin = '0';
+
+                // Check if the puzzle is solved AFTER a piece is dropped
+                if (isSolved()) {
+                    clearInterval(timerInterval);
+                    const endTime = new Date().getTime();
+                    const solveTimeSeconds = Math.floor((endTime - startTime) / 500);
+                    displayResult(solveTimeSeconds);
+                    disableDragging();
+                }
+            }
+        }
+
+        function handleDragLeave(event) {
+            // Optional: Add visual feedback when leaving a slot
+        }
+
+        function disableDragging() {
+            pieces.forEach(piece => {
+                piece.draggable = false;
+                piece.style.cursor = 'default';
+            });
+        }
+
+        
+
+        function displayResult(time) {
+            let message = "Congratulations! You solved the puzzle in ";
+            const minutes = Math.floor(time / 60);
+            const seconds = time % 60;
+            message += `${minutes > 0 ? minutes + ' minute' + (minutes > 1 ? 's ' : ' ') : ''}${seconds} seconds. `;
+
+            function puzzleCompleted() {
+  const animationContainer = document.getElementById('animation-container');
+  animationContainer.classList.add('animate');
+
+  // Optional: Remove the 'animate' class after it finishes (if you want it to play only once)
+  setTimeout(() => {
+    animationContainer.classList.remove('animate');
+    // Optionally reset its position and opacity if needed for future triggers
+    // animationContainer.style.left = '-300px';
+    // animationContainer.style.opacity = '0';
+  }, 2000); // Match the animation duration
+}
+
+// Example trigger (adapt to your puzzle completion logic)
+setTimeout(puzzleCompleted, 2000);
+
+            if (time <= 60) {
+                message += "Youre a genius mate. Well, for a baby back ribeyed porkchop!!";
+                cheerSound.play()
+            }else if (time <= 60) {
+                message += "You're a puzzle master!";
+                cheerSound.play()
+            } else if (time < 180) {
+                message += "Excellent work!";
+                cheerSound.play()
+            } else if (time < 120) {
+                message += "That was really nice. Check please... I cannot sit here now!";
+                cheerSound.play()
+            } else if (time < 150) {
+                message += "Great work, youre pretty good!";
+                cheerSound.play()
+            } else if (time < 180) {
+                message += "That was pretty cool. This must not be your first time!";
+                cheerSound.play()
+            } else if (time < 210) {
+                message += "You did pretty good. My grandmother would approve!";
+                cheerSound.play()
+            } else if (time < 240) {
+                message += "Morgan Freeman called and wants his beard back. You passed with a Hi C!";
+                cheerSound.play()
+            } else if (time < 270) {
+                message += "You honestly couldve done better. But not bad for your last time!";
+                cheerSound.play()
+            } else if (time < 300) {
+                message += "You honestly couldve done better. But not bad for your last time!";   
+                cheerSound.play()
+            } else {
+                message += "You are failure!";
+            }
+
+            messageContainer.textContent = message;
+        }
+
+        // Initialize the puzzle
+        createPuzzle();
+        shufflePieces();
+        startTimer();
+
+        // Add event listeners
+        pieces.forEach(piece => {
+            piece.addEventListener('dragstart', handleDragStart);
+        });
+
+        puzzleArea.addEventListener('dragover', handleDragOver);
+        puzzleArea.addEventListener('drop', handleDrop);
+        // puzzleArea.addEventListener('dragleave', handleDragLeave); // Optional
+    </script>
+</body>
+</html>

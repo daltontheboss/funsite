@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Quiz</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .question {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .options label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #results {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Mobile Quiz</h1>
+
+    <form id="quizForm">
+        <div class="question">
+            <p>1. What is the capital of France?</p>
+            <div class="options">
+                <label><input type="radio" name="q1" value="a"> London</label>
+                <label><input type="radio" name="q1" value="b"> Paris</label>
+                <label><input type="radio" name="q1" value="c"> Rome</label>
+                <label><input type="radio" name="q1" value="d"> Berlin</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>2. Which planet is known as the "Red Planet"?</p>
+            <div class="options">
+                <label><input type="radio" name="q2" value="a"> Jupiter</label>
+                <label><input type="radio" name="q2" value="b"> Mars</label>
+                <label><input type="radio" name="q2" value="c"> Venus</label>
+                <label><input type="radio" name="q2" value="d"> Saturn</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>3. What is the chemical symbol for water?</p>
+            <div class="options">
+                <label><input type="radio" name="q3" value="a"> Co2</label>
+                <label><input type="radio" name="q3" value="b"> O2</label>
+                <label><input type="radio" name="q3" value="c"> H2O</label>
+                <label><input type="radio" name="q3" value="d"> N2</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>4. Who painted the Mona Lisa?</p>
+            <div class="options">
+                <label><input type="radio" name="q4" value="a"> Vincent van Gogh</label>
+                <label><input type="radio" name="q4" value="b"> Pablo Picasso</label>
+                <label><input type="radio" name="q4" value="c"> Leonardo da Vinci</label>
+                <label><input type="radio" name="q4" value="d"> Claude Monet</label>
+            </div>
+        </div>
+
+        <div class="question">
+            <p>5. What is the largest ocean on Earth?</p>
+            <div class="options">
+                <label><input type="radio" name="q5" value="a"> Atlantic Ocean</label>
+                <label><input type="radio" name="q5" value="b"> Indian Ocean</label>
+                <label><input type="radio" name="q5" value="c"> Arctic Ocean</label>
+                <label><input type="radio" name="q5" value="d"> Pacific Ocean</label>
+            </div>
+        </div>
+
+        <button type="button" onclick="submitQuiz()">Submit Quiz</button>
+    </form>
+
+    <div id="results" style="display: none;"></div>
+
+    <script>
+        function submitQuiz() {
+            let score = 0;
+            const answers = {
+                q1: "b",
+                q2: "b",
+                q3: "c",
+                q4: "c",
+                q5: "d"
+            };
+
+            for (let i = 1; i <= 5; i++) {
+                const selectedOption = document.querySelector(`input[name="q${i}"]:checked`);
+                if (selectedOption && selectedOption.value === answers[`q${i}`]) {
+                    score++;
+                }
+            }
+
+            const resultsDiv = document.getElementById("results");
+            resultsDiv.textContent = `You scored ${score} out of 5!`;
+            resultsDiv.style.display = "block";
+        }
+    </script>
+
+</body>
+</html>
